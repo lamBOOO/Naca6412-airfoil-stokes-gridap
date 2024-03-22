@@ -1,6 +1,6 @@
 # Simulation
 
-![alt text](./result.pdf)
+![alt text](./result.png)
 
 ## Changes
 - Renameded the boundaries in the `geo`-file
