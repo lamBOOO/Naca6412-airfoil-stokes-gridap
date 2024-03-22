@@ -1,8 +1,5 @@
 using Gridap
 using GridapGmsh
-using CairoMakie
-using Gridap.CellData
-using Gridap.Arrays
 
 mshfile = joinpath("NACA6412airfoil.msh")
 model = GmshDiscreteModel(mshfile)
@@ -17,17 +14,16 @@ Q = TestFESpace(model,reffeₚ,conformity=:H1)
 Y = MultiFieldFESpace([V,Q])
 
 u_noslip = VectorValue(0,0)
-# u_inflowww = VectorValue(1,0)
-u_inflowww(x) = VectorValue([1.0-4.0*x[2]*x[2], x[1]*0.0])
+u_inflow(x) = VectorValue([1.0-4.0*x[2]*x[2], x[1]*0.0])
 
-U = TrialFESpace(V,[u_inflowww,u_noslip,u_noslip])
+U = TrialFESpace(V,[u_inflow,u_noslip,u_noslip])
 P = TrialFESpace(Q)
 X = MultiFieldFESpace([U,P])
 
 Ω = Triangulation(model)
 dΩ = Measure(Ω, 2)
 
-f = VectorValue(10.0,0.0)
+f = VectorValue(0.0,0.0)
 a((u,p),(v,q)) = ∫( ∇(v)⊙∇(u) - (∇⋅v)*p + q*(∇⋅u) )dΩ
 l((v,q)) = ∫( v⋅f )dΩ
 
@@ -48,6 +44,25 @@ writevtk(Ω,"results",order=2,cellfields=["uh"=>uh,"ph"=>ph])
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+# PLOTTING PLAYGROUND (IGNORE IF YOU USE PARAVIEW)
+# TOOD:
+# - clean this up
+using CairoMakie
+using Gridap.CellData
+using Gridap.Arrays
 
 
 search_method = KDTreeSearch(num_nearest_vertices=5)
@@ -170,3 +185,6 @@ airfoil_coords_ordered = [map(x->x.data, coords[closed_pt_loops[i]]) for i=1:len
 airfoil_coords_combined = vcat(airfoil_coords_ordered...)
 poly!(airfoil_coords_combined, color=:black)
 fig
+
+save("./result.pdf", fig)
+save("./result.svg", fig)

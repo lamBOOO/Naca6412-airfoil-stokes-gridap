@@ -1,5 +1,7 @@
 # Simulation
 
+![alt text](./result.svg)
+
 ## Changes
 - Renameded the boundaries in the `geo`-file
 - add physical points
