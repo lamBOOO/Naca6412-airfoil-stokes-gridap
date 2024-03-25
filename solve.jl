@@ -31,7 +31,7 @@ op = AffineFEOperator(a,l,X,Y)
 
 uh, ph = solve(op)
 
-writevtk(Ω,"results",order=2,cellfields=["uh"=>uh,"ph"=>ph])
+writevtk(Ω,"results",order=2,cellfields=["uh"=>uh,"ph"=>ph]); @info "wrote results.vtk"
 
 
 
@@ -56,7 +56,9 @@ writevtk(Ω,"results",order=2,cellfields=["uh"=>uh,"ph"=>ph])
 
 
 
+plot = false
 
+if plot
 # PLOTTING PLAYGROUND (IGNORE IF YOU USE PARAVIEW)
 # TOOD:
 # - clean this up
@@ -160,17 +162,17 @@ closed_pt_loops = [[] for i=1:length(airfoil_faces)]
 for index in 1:length(airfoil_faces)
   closed_pt_loops[index] = [airfoil_faces[index][1][1]]
   for i=1:length(airfoil_faces[index])-1
-    @info closed_pt_loops[index]
-    @info "ho"
+    # @info closed_pt_loops[index]
+    # @info "ho"
     nextpos = filter(x->x[1] == closed_pt_loops[index][end], airfoil_faces[index])
-    @show nextpos
+    # @show nextpos
     # nextneg = filter(x->x[2] == closed_pt_loops[index][end], airfoil_faces[index])
     # @show nextneg
     prevpos = filter(x->x[2] == closed_pt_loops[index][1], airfoil_faces[index])
-    @show prevpos
+    # @show prevpos
     # prevneg = filter(x->x[1] == closed_pt_loops[index][1], airfoil_faces[index])
     # @show prevneg
-    @info "hi"
+    # @info "hi"
     if length(nextpos) > 0
       push!(closed_pt_loops[index], nextpos[1][2])
     elseif length(prevpos) > 0
@@ -189,3 +191,6 @@ fig
 save("./result.pdf", fig)
 save("./result.png", fig)
 save("./result.svg", fig)
+
+
+end
