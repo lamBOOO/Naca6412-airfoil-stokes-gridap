@@ -187,4 +187,5 @@ poly!(airfoil_coords_combined, color=:black)
 fig
 
 save("./result.pdf", fig)
+save("./result.png", fig)
 save("./result.svg", fig)
