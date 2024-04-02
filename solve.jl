@@ -33,9 +33,28 @@ uh, ph = solve(op)
 
 writevtk(Ω,"results",order=2,cellfields=["uh"=>uh,"ph"=>ph]); @info "wrote results.vtk"
 
+# Output hack with connectivity (fast)
+using Gridap.CellData  # for KDTreeSearch eg
+using Gridap.Arrays  # for return_cache eg
+search_method = KDTreeSearch(num_nearest_vertices=5)
+ph_i = Interpolable(ph; searchmethod=search_method)
+uh_i = Interpolable(uh; searchmethod=search_method)
+const cache_p = return_cache(ph_i, Point(0.0, 0.0))
+const cache_u = return_cache(uh_i, Point(0.0, 0.0))
+Gridap.Visualization.write_vtk_file(Ω,"results_3",
+  nodaldata=[
+    "uh"=>map(x->evaluate!(cache_u, uh_i, x), Ω.grid.node_coordinates)
+    "ph"=>map(x->evaluate!(cache_p, ph_i, x), Ω.grid.node_coordinates)
+  ]
+); @info "wrote results.vtk"
 
-
-
+# Output hack with connectivity (slow)
+Gridap.Visualization.write_vtk_file(Ω,"results_2",
+  nodaldata=[
+    "uh"=>uh.(Ω.grid.node_coordinates)
+    "ph"=>ph.(Ω.grid.node_coordinates)
+  ]
+); @info "wrote results.vtk"
 
 
 
